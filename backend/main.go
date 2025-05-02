@@ -1,17 +1,56 @@
 package main
 
 import (
-	"log"
+	"fmt"
 	"net/http"
+	"os"
+	"time"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
+
+	"github.com/madn-optimo/backend/db"
+	"github.com/madn-optimo/backend/handlers"
+	"github.com/madn-optimo/backend/repositories"
+	"github.com/madn-optimo/backend/routes"
 )
 
 func main() {
-	r := chi.NewRouter()
-	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Server running OK"))
-	})
-	log.Print("Server starting on port 8080")
-	http.ListenAndServe(":8080", r)
+	// Configure logger
+	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
+	zerolog.SetGlobalLevel(zerolog.InfoLevel)
+	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: time.RFC3339})
+
+	// Get port from environment variable or default to 3000
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "3000"
+	}
+
+	// Initialize database
+	database, err := db.InitDB()
+	if err != nil {
+		log.Fatal().Err(err).Msg("Failed to initialize database")
+	}
+	defer database.Close()
+
+	// Initialize repositories
+	saleRepo := repositories.NewSaleRepository(database)
+	purchaseOrderRepo := repositories.NewPurchaseOrderRepository(database)
+
+	// Initialize handlers
+	saleHandler := handlers.NewSaleHandler(saleRepo)
+	purchaseOrderHandler := handlers.NewPurchaseOrderHandler(purchaseOrderRepo)
+
+	// Set up router and routes
+	router := chi.NewRouter()
+	routes.SetupRoutes(router, saleHandler, purchaseOrderHandler)
+
+	// Start server
+	addr := fmt.Sprintf(":%s", port)
+	log.Info().Str("address", addr).Msg("Server starting")
+	if err := http.ListenAndServe(addr, router); err != nil {
+		log.Fatal().Err(err).Msg("Server failed to start")
+	}
 }
