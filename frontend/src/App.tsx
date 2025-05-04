@@ -1,9 +1,12 @@
-function App() {
+import Navigation from "./components/Navigation";
+
+const App = () => {
   return (
     <>
-      <div>Frontend running OK</div>
+      <Navigation />
+      <div>You're on App.tsx</div>
     </>
   );
-}
+};
 
 export default App;

@@ -21,23 +21,20 @@ npm run start
 - [ ] Sales page
 
   - Components
-    - [ ] Header - Nav
-    - [ ] Graph
-    - [ ] Table - Sortable
-    - [ ] Button
+    - [x] Header - Nav
+    - [x] Graph - MUI
+    - [x] Table - Sortable - MUI
+    - [x] Button
 
 - [ ] Purchase order page
 
   - Components
-    - [ ] Header - Nav
-    - [ ] List
+    - [x] Header - Nav
+    - [x] List
     - [ ] Form - CRUD
-    - [ ] Button
+    - [x] Button
 
-- [ ] 404 page
-
-  - Components
-    - [ ] Header - Nav
+- [x] 404 page - This won't actually be needed, I'll just redirect to the sales page
 
 https://mui.com/
 
@@ -99,3 +96,14 @@ struct company {
     address string
 }
 ```
+
+### Notes
+
+#### Rows.Close()
+
+I've never seen rows.Close() before. What it apparently does:
+
+- This line ensures that the database connection's resources are properly released once you're done using the rows.
+- Holds a connection from the database connection pool.
+- Consumes resources on both the client and the server.
+- Should be called right after checking for err.

@@ -10,3 +10,8 @@ type Sale struct {
 	Currency string    `json:"currency"`
 	Date     time.Time `json:"date"`
 } 
+
+type SaleGroupedByMonth struct {
+	Month string `json:"month"`
+	Sales []Sale `json:"sales"`
+}

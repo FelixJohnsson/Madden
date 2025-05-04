@@ -93,6 +93,8 @@ func createItems(db *sql.DB) error {
 	return nil
 }
 
+
+
 func createSales(db *sql.DB) error {
 	_, err := db.Exec(`
 	CREATE TABLE IF NOT EXISTS sales (
@@ -101,6 +103,11 @@ func createSales(db *sql.DB) error {
 		currency TEXT NOT NULL,
 		date TIMESTAMP NOT NULL
 	)`)
+	if err != nil {
+		return err
+	}
+
+	err = fillSales(db)
 	if err != nil {
 		return err
 	}
