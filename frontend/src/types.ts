@@ -21,7 +21,8 @@ export type Item = {
 
 export type PurchaseOrder = {
   id: number;
-  item: Item;
+  itemId: number;
+  itemName: string;
   amount: number;
   currency: string;
   createdAt: string;
@@ -33,12 +34,9 @@ export type PurchaseOrder = {
 
 export type Sale = {
   id: number;
+  itemId: number;
+  itemName: string;
   amount: number;
   currency: string;
   date: string;
-};
-
-export type SaleGroupedByMonth = {
-  month: string;
-  sales: Sale[];
 };

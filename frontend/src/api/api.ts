@@ -1,6 +1,6 @@
 import * as t from "../types";
 
-const PORT = 3000;
+const PORT = 8080;
 const URL = `http://localhost:${PORT}/api`;
 
 /* 
@@ -12,26 +12,20 @@ const URL = `http://localhost:${PORT}/api`;
 
 // --------------- Sales ---------------
 
-export const getSales = async (
-  page: number = 1,
-  pageSize: number = 100
-): Promise<t.Sale[]> => {
+export const getSales = async (): Promise<t.Sale[]> => {
   try {
-    const response = await fetch(
-      `${URL}/sales?page=${page}&pageSize=${pageSize}`
-    );
+    const response = await fetch(`${URL}/sales`);
 
     if (!response.ok) {
       throw new Error(`API error: ${response.status} ${response.statusText}`);
     }
 
-    const data = await response.json();
+    const data: t.Sale[] = await response.json();
 
     if (!Array.isArray(data)) {
       throw new Error("Invalid response format: expected an array of sales");
     }
 
-    console.log(data);
     return data;
   } catch (error) {
     console.error("Failed to fetch sales:", error);
@@ -40,57 +34,96 @@ export const getSales = async (
 };
 
 export const getSaleById = async (id: number): Promise<t.Sale> => {
-  const response = await fetch(`${URL}/sales/${id}`);
-  return response.json();
+  try {
+    const response = await fetch(`${URL}/sales/${id}`);
+
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status} ${response.statusText}`);
+    }
+
+    const data: t.Sale = await response.json();
+
+    if (!Array.isArray(data)) {
+      throw new Error("Invalid response format: expected an array of sales");
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Failed to fetch sale by id:", error);
+    throw error;
+  }
 };
 
 // --------------- Purchase Orders ---------------
 
 // GET
 export const getPurchaseOrders = async (): Promise<t.PurchaseOrder[]> => {
-  const response = await fetch(`${URL}/purchase-orders`);
-  return response.json();
+  try {
+    const response = await fetch(`${URL}/purchase-orders`);
+
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status} ${response.statusText}`);
+    }
+
+    const data: t.PurchaseOrder[] = await response.json();
+
+    if (!Array.isArray(data)) {
+      throw new Error(
+        "Invalid response format: expected an array of purchase orders"
+      );
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Failed to fetch purchase orders:", error);
+    throw error;
+  }
 };
 
 // POST
 export const createPurchaseOrder = async (
   purchaseOrder: t.PurchaseOrder
 ): Promise<t.PurchaseOrder> => {
-  const response = await fetch(`${URL}/purchase-orders`, {
-    method: "POST",
-    body: JSON.stringify(purchaseOrder),
-  });
-  return response.json();
+  try {
+    const formattedPurchaseOrder = {
+      ...purchaseOrder,
+      amount: Number(purchaseOrder.amount),
+    };
+    const response = await fetch(`${URL}/purchase-orders`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formattedPurchaseOrder),
+    });
+
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Failed to create purchase order:", error);
+    throw error;
+  }
 };
 
 // DELETE
-export const deletePurchaseOrder = async (id: number): Promise<void> => {
-  await fetch(`${URL}/purchase-orders/${id}`, {
-    method: "DELETE",
-  });
-};
+export const deletePurchaseOrder = async (id: number): Promise<boolean> => {
+  try {
+    const response = await fetch(`${URL}/purchase-orders/${id}`, {
+      method: "DELETE",
+    });
 
-/* NOT NEEDED, BUT I'LL KEEP IT FOR NOW */
-// --------------- Companies ---------------
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status} ${response.statusText}`);
+    }
 
-export const getCompanies = async (): Promise<t.Company[]> => {
-  const response = await fetch(`${URL}/companies`);
-  return response.json();
-};
-
-export const getCompanyById = async (id: number): Promise<t.Company> => {
-  const response = await fetch(`${URL}/companies/${id}`);
-  return response.json();
-};
-
-// --------------- Items ---------------
-
-export const getItems = async (): Promise<t.Item[]> => {
-  const response = await fetch(`${URL}/items`);
-  return response.json();
-};
-
-export const getItemById = async (id: number): Promise<t.Item> => {
-  const response = await fetch(`${URL}/items/${id}`);
-  return response.json();
+    console.log("Successfully deleted purchase order");
+    return true;
+  } catch (error) {
+    console.error("Failed to delete purchase order:", error);
+    throw error;
+  }
 };

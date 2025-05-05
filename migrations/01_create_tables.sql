@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS sales (
   id SERIAL PRIMARY KEY,
   amount   NUMERIC(10,2) NOT NULL,
   item_id INT NOT NULL REFERENCES items(id),
+  item_name TEXT NOT NULL,
   currency TEXT NOT NULL,
   date DATE NOT NULL
 );
@@ -24,7 +25,8 @@ CREATE TABLE IF NOT EXISTS sales (
 CREATE TABLE IF NOT EXISTS purchase_orders (
   id SERIAL PRIMARY KEY,
   item_id INT NOT NULL REFERENCES items(id),
-  amount   NUMERIC(10,2) NOT NULL,
+  item_name TEXT NOT NULL,
+  amount   INT NOT NULL,
   currency TEXT NOT NULL,
   created_at DATE NOT NULL,
   status TEXT NOT NULL,

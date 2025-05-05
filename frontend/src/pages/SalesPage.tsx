@@ -1,50 +1,37 @@
-/*
-
-GET sales data, likely grouped by month.
-
-Filter by product(s) (query params or frontend filtering).
-
-*/
-
 import Navigation from "../components/Navigation";
 
-import { BarChart } from "@mui/x-charts/BarChart";
 import Button from "../components/Button";
-import List from "../components/List";
+import Chart from "../components/Chart";
+import { SalesList } from "../components/List";
 
 import { getSales } from "../api/api";
 import { useState, useEffect } from "react";
 import * as t from "../types";
-
-const ChartsOverviewDemo = ({ data }: { data: t.Sale[] }) => {
-  return (
-    <BarChart
-      series={[
-        { data: [35, 44, 24, 34] },
-        { data: [51, 6, 49, 30] },
-        { data: [15, 25, 30, 50] },
-        { data: [60, 50, 15, 25] },
-      ]}
-      width={1000}
-      xAxis={[{ data: ["Q1", "Q2", "Q3", "Q4"] }]}
-    />
-  );
-};
-
-const sortSalesByMonth = (sales: t.Sale[]): t.SaleGroupedByMonth[] => {};
+import sortSalesByMonth from "../utils/sortSalesByMonth";
 
 const SalesPage = () => {
   const [sales, setSales] = useState<t.Sale[]>([]);
-  const [salesByMonth, setSalesByMonth] = useState<t.SaleGroupedByMonth[]>([]);
+  const [salesByMonth, setSalesByMonth] = useState<number[]>([]);
+  const [selectedItem, setSelectedItem] = useState<string>("");
 
   useEffect(() => {
     getSales().then((sales) => {
+      setSalesByMonth(sortSalesByMonth(sales));
       setSales(sales);
-      const sorted = sortSalesByMonth(sales);
-      setSalesByMonth(sorted);
-      console.log(salesByMonth);
     });
   }, []);
+
+  useEffect(() => {
+    if (selectedItem) {
+      const filteredSales = sales.filter(
+        (sale) => sale.itemName === selectedItem
+      );
+
+      setSalesByMonth(sortSalesByMonth(filteredSales));
+    } else {
+      setSalesByMonth(sortSalesByMonth(sales));
+    }
+  }, [selectedItem]);
 
   return (
     <>
@@ -52,11 +39,28 @@ const SalesPage = () => {
       <div className="flex flex-col items-center justify-center">
         <h1 className="text-3xl font-bold">Sales Page</h1>
       </div>
-      <ChartsOverviewDemo data={sales} />
-      <div className="flex flex-col items-center justify-center">
-        <Button />
+
+      <Chart data={salesByMonth} />
+      <div className="flex flex-wrap items-center justify-center gap-2 mx-auto w-2/3">
+        {Array.from(new Set(sales.map((sale) => sale.itemName))).map(
+          (itemName) => (
+            <Button
+              key={itemName}
+              onClick={() => setSelectedItem(itemName)}
+              selected={selectedItem === itemName}
+            >
+              {itemName}
+            </Button>
+          )
+        )}
+        <Button
+          onClick={() => setSelectedItem("")}
+          selected={selectedItem === ""}
+        >
+          All
+        </Button>
       </div>
-      <List />
+      <SalesList data={sales} />
     </>
   );
 };

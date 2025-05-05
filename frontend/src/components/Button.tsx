@@ -1,7 +1,20 @@
-const Button = () => {
+const Button = ({
+  children,
+  onClick,
+  selected,
+}: {
+  children: React.ReactNode;
+  onClick: () => void;
+  selected: boolean;
+}) => {
   return (
-    <button className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors duration-300 cursor-pointer">
-      Button
+    <button
+      onClick={onClick}
+      className={`bg-blue-500 text-sm text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors duration-300 cursor-pointer ${
+        selected ? "bg-blue-600" : ""
+      }`}
+    >
+      {children}
     </button>
   );
 };

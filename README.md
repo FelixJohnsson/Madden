@@ -112,3 +112,8 @@ I've never seen rows.Close() before. What it apparently does:
 #### Sorting the sales by month
 
 I'm putting the hard work on the SQL query, but not sure if Go should handle the sorting.
+
+### Running
+
+docker-compose up --build -d
+docker-compose up

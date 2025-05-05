@@ -18,7 +18,7 @@ func NewPurchaseOrderRepository(db *sql.DB) *PurchaseOrderRepository {
 
 func (r *PurchaseOrderRepository) GetAll() ([]models.PurchaseOrder, error) {
     rows, err := r.db.Query(`
-        SELECT id, item_id, amount, currency, created_at, status, company_id
+        SELECT id, item_id, item_name, amount, currency, created_at, status, company_id
         FROM purchase_orders
         ORDER BY created_at DESC
     `)
@@ -34,6 +34,7 @@ func (r *PurchaseOrderRepository) GetAll() ([]models.PurchaseOrder, error) {
         if err := rows.Scan(
             &o.ID,
             &o.ItemID,
+            &o.ItemName,
             &o.Amount,
             &o.Currency,
             &o.CreatedAt,
@@ -54,7 +55,7 @@ func (r *PurchaseOrderRepository) GetAll() ([]models.PurchaseOrder, error) {
 
 func (r *PurchaseOrderRepository) GetByID(id int) (*models.PurchaseOrder, error) {
     row := r.db.QueryRow(`
-        SELECT id, item_id, amount, currency, created_at, status, company_id
+        SELECT id, item_id, item_name, amount, currency, created_at, status, company_id
         FROM purchase_orders
         WHERE id = $1
     `, id)
@@ -63,6 +64,7 @@ func (r *PurchaseOrderRepository) GetByID(id int) (*models.PurchaseOrder, error)
     if err := row.Scan(
         &o.ID,
         &o.ItemID,
+        &o.ItemName,
         &o.Amount,
         &o.Currency,
         &o.CreatedAt,
@@ -80,13 +82,15 @@ func (r *PurchaseOrderRepository) GetByID(id int) (*models.PurchaseOrder, error)
 
 func (r *PurchaseOrderRepository) Create(order models.PurchaseOrder) (int, error) {
     var id int
+
     err := r.db.QueryRow(`
         INSERT INTO purchase_orders
-          (item_id, amount, currency, created_at, status, company_id)
-        VALUES ($1, $2, $3, $4, $5, $6)
+          (item_id, item_name, amount, currency, created_at, status, company_id)
+        VALUES ($1, $2, $3, $4, $5, $6, $7)
         RETURNING id
     `,
         order.ItemID,
+        order.ItemName,
         order.Amount,
         order.Currency,
         order.CreatedAt,

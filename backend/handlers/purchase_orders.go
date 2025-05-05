@@ -64,13 +64,10 @@ func (h *PurchaseOrderHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Set defaults if not provided
 	if order.CreatedAt.IsZero() {
 		order.CreatedAt = time.Now()
 	}
-	if order.Status == "" {
-		order.Status = "pending"
-	}
+	order.Amount = int(order.Amount)
 
 	id, err := h.repo.Create(order)
 	if err != nil {
