@@ -25,7 +25,7 @@ func main() {
 	// Get port from environment variable or default to 3000
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "3000"
+		port = "8080"
 	}
 
 	// Initialize database
@@ -35,19 +35,15 @@ func main() {
 	}
 	defer database.Close()
 
-	// Initialize repositories
 	saleRepo := repositories.NewSaleRepository(database)
 	purchaseOrderRepo := repositories.NewPurchaseOrderRepository(database)
 
-	// Initialize handlers
 	saleHandler := handlers.NewSaleHandler(saleRepo)
 	purchaseOrderHandler := handlers.NewPurchaseOrderHandler(purchaseOrderRepo)
 
-	// Set up router and routes
 	router := chi.NewRouter()
 	routes.SetupRoutes(router, saleHandler, purchaseOrderHandler)
 
-	// Start server
 	addr := fmt.Sprintf(":%s", port)
 	log.Info().Str("address", addr).Msg("Server starting")
 	if err := http.ListenAndServe(addr, router); err != nil {

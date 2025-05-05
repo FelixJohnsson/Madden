@@ -9,59 +9,57 @@ import (
 )
 
 type SaleRepository struct {
-	db *sql.DB
+    db *sql.DB
 }
 
 func NewSaleRepository(db *sql.DB) *SaleRepository {
-	return &SaleRepository{db: db}
+    return &SaleRepository{db: db}
 }
 
-func (r *SaleRepository) GetAll(page, pageSize int) ([]models.Sale, error) {
-	offset := (page - 1) * pageSize
+// GetAll returns all sales, ordered by date descending
+func (r *SaleRepository) GetAll() ([]models.Sale, error) {
+    rows, err := r.db.Query(`
+        SELECT id, amount, currency, date
+        FROM sales
+        ORDER BY date DESC
+    `)
+    if err != nil {
+        log.Error().Err(err).Msg("Failed to query sales")
+        return nil, err
+    }
+    defer rows.Close()
 
-	rows, err := r.db.Query(`
-		SELECT id, amount, currency, date 
-		FROM sales
-		ORDER BY date DESC
-		LIMIT ? OFFSET ?
-	`, pageSize, offset)
-
-	if err != nil {
-		log.Error().Err(err).Msg("Failed to query sales")
-		return nil, err
-	}
-	defer rows.Close()
-
-	var sales []models.Sale
-	for rows.Next() {
-		var sale models.Sale
-		err := rows.Scan(&sale.ID, &sale.Amount, &sale.Currency, &sale.Date)
-		if err != nil {
-			log.Error().Err(err).Msg("Failed to scan sale row")
-			return nil, err
-		}
-		sales = append(sales, sale)
-	}
-
-	return sales, nil
+    var sales []models.Sale
+    for rows.Next() {
+        var s models.Sale
+        if err := rows.Scan(&s.ID, &s.Amount, &s.Currency, &s.Date); err != nil {
+            log.Error().Err(err).Msg("Failed to scan sale row")
+            return nil, err
+        }
+        sales = append(sales, s)
+    }
+    if err := rows.Err(); err != nil {
+        log.Error().Err(err).Msg("Error iterating sale rows")
+        return nil, err
+    }
+    return sales, nil
 }
 
+// GetByID returns a single sale by its ID, or nil,nil if not found
 func (r *SaleRepository) GetByID(id int) (*models.Sale, error) {
-	row := r.db.QueryRow(`
-		SELECT id, amount, currency, date
-		FROM sales
-		WHERE id = ?
-	`, id)
+    row := r.db.QueryRow(`
+        SELECT id, amount, currency, date
+        FROM sales
+        WHERE id = $1
+    `, id)
 
-	var sale models.Sale
-	err := row.Scan(&sale.ID, &sale.Amount, &sale.Currency, &sale.Date)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, nil
-		}
-		log.Error().Err(err).Msg("Failed to scan sale row")
-		return nil, err
-	}
-
-	return &sale, nil
+    var s models.Sale
+    if err := row.Scan(&s.ID, &s.Amount, &s.Currency, &s.Date); err != nil {
+        if err == sql.ErrNoRows {
+            return nil, nil
+        }
+        log.Error().Err(err).Msg("Failed to scan sale row")
+        return nil, err
+    }
+    return &s, nil
 }

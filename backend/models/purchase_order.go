@@ -5,11 +5,11 @@ import (
 )
 
 type PurchaseOrder struct {
-	ID        int       `json:"id"`
-	Item      Item      `json:"item"`
-	Amount    float64   `json:"amount"`
-	Currency  string    `json:"currency"`
-	CreatedAt time.Time `json:"createdAt"`
-	Status    string    `json:"status"`
-	CompanyID int       `json:"companyId"`
-} 
+	ID int
+	ItemID int
+	Amount float64
+	Currency string
+	CreatedAt time.Time
+	Status string
+	CompanyID int
+}

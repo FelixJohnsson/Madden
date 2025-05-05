@@ -65,10 +65,11 @@ Database:
 
 ```
 struct sale {
-id int
-amount float64
-currency string
-date time.Time
+  id int
+  itemId int
+  amount float64
+  currency string
+  date time.Time
 }
 
 struct item {
@@ -82,7 +83,7 @@ struct item {
 
 struct purchaseOrder {
     id int
-    item Item
+    itemId int
     amount float64
     currency string
     createdAt time.Time
@@ -107,3 +108,7 @@ I've never seen rows.Close() before. What it apparently does:
 - Holds a connection from the database connection pool.
 - Consumes resources on both the client and the server.
 - Should be called right after checking for err.
+
+#### Sorting the sales by month
+
+I'm putting the hard work on the SQL query, but not sure if Go should handle the sorting.
