@@ -81,5 +81,7 @@ I've never seen rows.Close() before. What it apparently does:
 
 ### Running
 
+I'm on node v18.12.1
+
 docker-compose up --build -d
 docker-compose up
