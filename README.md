@@ -1,24 +1,8 @@
-# React + TypeScript + Vite
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules. To run the application:
-
-1. Install dependencies
-
-```bash
-npm install
-```
-
-1. Start the dev-server
-
-```bash
-npm run start
-```
-
 ## Plan
 
 ### Frontend:
 
-- [ ] Sales page
+- [x] Sales page
 
   - Components
     - [x] Header - Nav
@@ -26,12 +10,12 @@ npm run start
     - [x] Table - Sortable - MUI
     - [x] Button
 
-- [ ] Purchase order page
+- [x] Purchase order page
 
   - Components
     - [x] Header - Nav
     - [x] List
-    - [ ] Form - CRUD
+    - [x] Form - CRUD
     - [x] Button
 
 - [x] 404 page - This won't actually be needed, I'll just redirect to the sales page
@@ -55,48 +39,13 @@ API - CRUD
 
 ### Backend:
 
-- [ ] Sales API
-- [ ] Purchase order API
+- [x] Sales API
+- [x] Purchase order API
 
 Database:
 
-- [ ] Sales
-- [ ] Purchase orders
-
-```
-struct sale {
-  id int
-  itemId int
-  amount float64
-  currency string
-  date time.Time
-}
-
-struct item {
-    id int
-    name string
-    price float64
-    currency string
-    quantity int
-    companyId int
-}
-
-struct purchaseOrder {
-    id int
-    itemId int
-    amount float64
-    currency string
-    createdAt time.Time
-    status string
-    companyId int
-}
-
-struct company {
-    id int
-    name string
-    address string
-}
-```
+- [x] Sales
+- [x] Purchase orders
 
 ### Notes
 
@@ -109,9 +58,26 @@ I've never seen rows.Close() before. What it apparently does:
 - Consumes resources on both the client and the server.
 - Should be called right after checking for err.
 
-#### Sorting the sales by month
+#### Drawbacks
 
-I'm putting the hard work on the SQL query, but not sure if Go should handle the sorting.
+- No hooks
+- Bad error handling
+- No tests
+
+### Criterias
+
+- Sales page
+- [x] A graph of sales per month
+- [x] A filter to choose which product(s) you are looking at
+
+- Purchase Order page
+- [x] A simple list of all existing purchase orders
+- [x] Ability to add new purchase orders or delete existing
+
+#### Tech stack
+
+- [x] Golang backend with Chi
+- [x] Postgres database
 
 ### Running
 

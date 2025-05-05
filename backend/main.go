@@ -17,18 +17,15 @@ import (
 )
 
 func main() {
-	// Configure logger
 	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: time.RFC3339})
 
-	// Get port from environment variable or default to 3000
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
 	}
 
-	// Initialize database
 	database, err := db.InitDB()
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed to initialize database")

@@ -11,7 +11,6 @@ const URL = `http://localhost:${PORT}/api`;
 */
 
 // --------------- Sales ---------------
-
 export const getSales = async (): Promise<t.Sale[]> => {
   try {
     const response = await fetch(`${URL}/sales`);
@@ -120,7 +119,6 @@ export const deletePurchaseOrder = async (id: number): Promise<boolean> => {
       throw new Error(`API error: ${response.status} ${response.statusText}`);
     }
 
-    console.log("Successfully deleted purchase order");
     return true;
   } catch (error) {
     console.error("Failed to delete purchase order:", error);

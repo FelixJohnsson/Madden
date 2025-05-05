@@ -65,7 +65,7 @@ func (h *PurchaseOrderHandler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if order.CreatedAt.IsZero() {
-		order.CreatedAt = time.Now()
+			order.CreatedAt = time.Now()
 	}
 	order.Amount = int(order.Amount)
 

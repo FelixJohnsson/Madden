@@ -13,13 +13,11 @@ func SetupRoutes(
 	saleHandler *handlers.SaleHandler,
 	purchaseOrderHandler *handlers.PurchaseOrderHandler,
 ) {
-	// Middleware
 	router.Use(middleware.Logger)
 	router.Use(middleware.Recoverer)
 	router.Use(middleware.RequestID)
 	router.Use(middleware.RealIP)
 
-	// CORS middleware
 	router.Use(cors.Handler(cors.Options{
 		AllowedOrigins:   []string{"*"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
